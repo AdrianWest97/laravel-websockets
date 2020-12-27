@@ -1,66 +1,69 @@
 <template>
-  <div class="home col-5 mx-auto py-5 mt-5">
-    <h1 class="text-center">Register</h1>
-    <div class="card">
-      <div class="card-body">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <input
-            type="text"
+<div class="container my-16">
+<v-row justify="center" dense>
+    <v-col cols="12" class="justify-content-center" md="4" lg="4">
+    <v-card outlined>
+     <v-card-title headline>Register</v-card-title>
+      <v-card-text>
+         <v-form
+         @submit.prevent="register"
+          v-model="valid"
+           lazy-validation
+           ref="form"
+         >
+          <v-text-field 
+          outlined dense
+           label="Username"
+            required 
             v-model="form.name"
-            class="form-control"
-            id="name"
-          />
+             :rules="[v => !!v || 'This field is required']"
+            ></v-text-field>
           <span class="text-danger" v-if="errors.name">
             {{ errors.name[0] }}
           </span>
-        </div>
-        <div class="form-group">
-          <label for="email">Email address:</label>
-          <input
-            type="email"
+            <v-text-field 
+          outlined dense
+           label="Email address"
+            required 
             v-model="form.email"
-            class="form-control"
-            id="email"
-          />
+             :rules="[v => !!v || 'This field is required']"
+            ></v-text-field>
           <span class="text-danger" v-if="errors.email">
             {{ errors.email[0] }}
           </span>
-        </div>
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input
-            type="password"
+             <v-text-field 
+          outlined dense
+           label="Password"
+           type="password"
+            required 
             v-model="form.password"
-            class="form-control"
-            id="password"
-          />
+             :rules="[v => !!v || 'This field is required']"
+            ></v-text-field>
           <span class="text-danger" v-if="errors.password">
             {{ errors.password[0] }}
           </span>
-        </div>
-        <div class="form-group">
-          <label for="password_confirmation">Confirm Password:</label>
-          <input
+             <v-text-field 
+          outlined dense
+           label="Confirm password"
+            required 
             type="password"
             v-model="form.password_confirmation"
-            class="form-control"
-            id="password_confirmation"
-          />
+             :rules="[v => !!v || 'This field is required']"
+            ></v-text-field>
           <span class="text-danger" v-if="errors.password_confirmation">
             {{ errors.password_confirmation[0] }}
           </span>
-        </div>
-        <button
-          type="submit"
-          @click.prevent="register"
-          class="btn btn-primary btn-block"
-        >
-          Register
-        </button>
-      </div>
-    </div>
-  </div>
+        <v-btn
+           :loading="loading"
+            type="submit"
+             :disabled="!valid"
+              color="primary">Register</v-btn>
+         </v-form>
+      </v-card-text>
+    </v-card>
+    </v-col>
+</v-row>
+</div>
 </template>
 
 <script>
@@ -69,6 +72,8 @@ import User from "../apis/User";
 export default {
   data() {
     return {
+         valid:true,
+        loading:false,
       form: {
         name: "",
         email: "",

@@ -9,7 +9,6 @@ import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-
   state: {
     auth: {
       login: false,
@@ -70,6 +69,7 @@ export default new Vuex.Store({
 
     ADD_POST(state, payload) {
       //prepend array
+      if(!state.postList.includes(payload))
           state.postList = [payload,...state.postList]
     },
 
@@ -116,9 +116,12 @@ export default new Vuex.Store({
     },
     filterByCategory({ commit }, payload) {
       commit('UPDATE_FILTER',payload)
-    }
-    //  loadImage(image){
-    //     return `${process.env.VUE_APP_BASE_URL}/storage/${image}`
-    // },
+    },
+    deletePost({ commit},id){
+      commit('SET_DELETE_DIALOG',{
+          visible:true,
+          id:id
+      })
+    },
   },
 });

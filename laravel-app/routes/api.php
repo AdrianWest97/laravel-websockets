@@ -18,17 +18,23 @@ Route::group(['middleware' => ['auth:api']], function () {
     return $request->user();
 });
 
+Route::get("/user/post","postController@userPost");
 
 Route::prefix('post')->group(function(){
 Route::post("/create/{mode?}/{id?}","postController@store");
 Route::delete("/delete/{id}","postController@delete");
-Route::get('/get/{id}',"postController@get");
-Route::get("/all","postController@userPost");
 });
+
+//comments
+Route::post('/comment/create', "CommentController@create");
 });
 
 Route::get('/categories','CategoryController@all');
 Route::get('/post/all','postController@all');
+Route::get('/post/get/{id}',"postController@get");
+
+
+
 Route::post('/login', 'LoginController@login');
 Route::post('/register', 'RegisterController@register');
 Route::post('/logout', 'LoginController@logout')->middleware('auth:api');

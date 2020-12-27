@@ -2,15 +2,12 @@
   <v-col cols="12" md="4">
   <v-row>
     <v-col cols="12">
-      <v-btn
-       color="indigo" 
-       large 
-       outlined
-       :to="{name:'NewPost', params:{mode: 'add'}}"
-       >Create new post <v-icon>mdi-plus</v-icon></v-btn>
+      <create-button/>
     </v-col>
-      <v-col cols="12">
-        <v-card outlined>
+
+      <v-col cols="12" lg="10" md="10">
+        <!-- <search-bar></search-bar> -->
+        <v-card outlined dense>
           <v-card-title>Category</v-card-title>
           <v-card-text>
             <v-list>
@@ -41,9 +38,12 @@
 
 <script>
 import { mapState } from 'vuex';
+import CreateButton from './CreateButton.vue';
+import SearchBar from './searchBar.vue';
 /* eslint-disable */
 
 export default {
+  components: { CreateButton, SearchBar },
 data:() =>({
   selectedItem:null,
 }),

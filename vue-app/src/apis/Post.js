@@ -10,5 +10,5 @@ export default {
     },
     ById(id) {
         return Api().get(`post/get/${id}`);
-    }
+    },
 }

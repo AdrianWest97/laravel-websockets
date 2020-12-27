@@ -20,7 +20,8 @@
 						label="Select category"
             :rules="[v => !!v || 'Post category is required']"
 						required
-                        outlined
+            dense
+            outlined
 						></v-select>
                    </v-col>
                       <v-col cols="12">
@@ -31,24 +32,16 @@
                          label="Post Title"
                          outlined
                          required
+                         dense
                          >
                          </v-text-field>
                       </v-col>
-                         <v-col cols="12">
-                               <vue-editor :editorToolbar="customToolbar"  v-model="form.post"></vue-editor>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-switch
-                        v-model="preview"
-                        label="preview"
-                      ></v-switch>
-                              <div v-show="preview" v-html="form.post"></div>
-                        </v-col>
-                        <v-col cols="12">
+                       <v-col cols="12">
                           <template>
                       <v-file-input
                         label="Upload Front image"
                         outlined
+                        dense
                         v-model="form.image"
                         prepend-icon="mdi-camera"
                       ></v-file-input>
@@ -81,15 +74,33 @@
                                <v-img :src='temp_img'></v-img>
                            </v-avatar>
                            </v-col>
+                    
+                         <v-col cols="12">
+                               <vue-editor required :editorToolbar="customToolbar"  v-model="form.post"></vue-editor>
+                                     <span class="text-danger" v-if="errors.title">
+                             Please add some content to this post.
+                            </span>
+                        </v-col>
                         <v-col cols="12">
+                          <v-switch
+                        v-model="preview"
+                        label="preview"
+                      ></v-switch>
+                        </v-col>
+                    <v-col cols="12" v-show="preview">
+                      <div  v-html="form.post"></div>
+                    </v-col>
+                            <v-col cols="12">
                       <v-combobox multiple
                     v-model="form.tags" 
                     label="Tags" 
                     append-icon
                     chips
                     outlined
+                    dense
+                    :rules="[v => !!v || 'Add up to 5 blog tags']"
+					        	required
                     deletable-chips
-                    class="tag-input"
                     :search-input.sync="tag" 
                     @keyup.tab="updateTags"
                     @paste="updateTags">
@@ -98,6 +109,7 @@
               :key="JSON.stringify(data.item)"
               v-bind="data.attrs"
               close
+              small
               :input-value="data.selected"
               :disabled="data.disabled"
               @click:close="data.parent.selectItem(data.item)"
@@ -106,7 +118,11 @@
             </v-chip>
           </template>
               </v-combobox>
+                    <span class="text-danger" v-if="errors.tags">
+                            Add up to 5 blog tags  
+                            </span>
                         </v-col>
+                       
                  </v-row>
                 </v-card-text>
                 <v-card-actions>
@@ -117,7 +133,7 @@
             large
             :disabled="!valid"
           >
-          {{mode == 'add' ? 'Publish Blog' : 'Save Changes'}}  
+          {{mode == 'edit' ? 'Save and publish' : 'Publish Blog'}}  
           </v-btn>
             <v-btn
             color="primary"
@@ -126,7 +142,7 @@
             :disabled="!valid"
             large
           >
-            Add to draft
+         Draft blog 
           </v-btn>
            </v-card-actions>
               </v-card>
@@ -148,6 +164,7 @@ data:() =>({
     dialog:true,
     valid: true,
     preview:true,
+    errors: [],
     customToolbar: [
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
 
@@ -200,9 +217,10 @@ methods:{
        title:this.post.title,
        post:this.post.post,
        tags:this.post.tags[0].name.split(","),
-       isDraft:this.post.isDraft ? true : false,
+       isDraft:false
      }
-    this.temp_img =`${process.env.VUE_APP_BASE_URL}/storage/${this.post.image.path}`
+    if(this.post.image != null)
+       this.temp_img =`${process.env.VUE_APP_BASE_URL}/storage/${this.post.image.path}`
     }
   },
    draft(){
@@ -219,12 +237,17 @@ methods:{
             //post form
             Post.create(
               formData, //form data to submit
-              this.mode, //edit or asdd
+              this.mode, //edit or add
                this.post != null ? this.post.id : null //id ofpost if edit
                )
             .then((res) =>{
              this.$refs.form.reset()
-            });
+             this.form = {}
+            }).catch(error => {
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors;
+          }
+        });
          }
     },
       checkKey(key,value){
@@ -239,6 +262,7 @@ methods:{
       // console.log(this.form.tags)
     }
 },
+
 created(){
 this.checkMode();
 },

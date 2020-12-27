@@ -1,6 +1,6 @@
 /* eslint-disable */
 <template>
-   <v-col cols="12" md="7">
+   <v-col cols="12" md="8">
        <v-row>
   <v-col cols="12">
   <v-sheet
@@ -21,9 +21,9 @@
             v-show="!firstLoad"
             :loading="loading"
            >
-               <v-card flat dense tile>
+               <v-card  dense flat tile>
                       <v-card-title  class="dark--text">
-          <span class="headline"><router-link :to="{name: 'blog_details',params:{blogId: post.id}}">{{post.title}}</router-link></span>
+          <h1 class="blog-head"><router-link :to="{name: 'blog_details',params:{blogId: post.id}}">{{`${post.title}`}}</router-link></h1>
           <v-spacer></v-spacer>
           <v-menu
             bottom
@@ -59,13 +59,13 @@
                    </v-card-subtitle>
                    <v-card-text>
                        <v-row>
-                           <v-col cols="12"  v-if="post.image != null">
+  <v-col cols="12"  v-if="post.image">
     <v-img
         :src="loadImage(post.image.path)"
         :lazy-src="`https://picsum.photos/10/6`"
         aspect-ratio="1"
          max-height="250"
-        class="grey lighten-2"
+        class="grey lighten-2 rounded"
         fit
       >
         <template v-slot:placeholder>
@@ -81,9 +81,9 @@
           </v-row>
         </template>
       </v-img>
-                           </v-col>
+  </v-col>
                        </v-row>
-                      <div v-html="post.post.length > 202 ? `${post.post.substring(0,202)}...` : post.post"></div>
+                      <div v-html="post.post.length > 202 ? `${post.post.substring(0,150)}...` : post.post"></div>
                     <v-chip
                       class="mr-2"
                       v-for="tag in post.tags[0].name.split(',')"
@@ -153,7 +153,7 @@ computed:{
     checkAction(action, id){
         if(action == 'edit'){
 
-          this.$router.push({name:'NewPost', params:{mode: 'edit',post:this.postList.findside(post => post.id == id)}})
+          this.$router.push({name:'NewPost', params:{mode: 'edit',post:this.postList.find(post => post.id == id)}})
         }else if(action == 'delete'){
             this.deletePost(id);
         }
@@ -179,27 +179,7 @@ computed:{
 
   },
 
-mounted(){
-  //broadcast new post
- window.Echo.channel('NewPostChannel')
-.listen('NewPost', (e)=>{
-//update post list state
-      this.$store.commit('ADD_POST',e.post);
-
-});
-//broadcast delete
-//update post list state
-window.Echo.channel('DeleteChannel')
-.listen('DeletePost', (e)=>{
-this.$store.commit('DELETE_POST',e.delete_id);
-})
-
-//update a specific post
-window.Echo.channel('UpdatePostChannel')
-.listen('UpdatePost', (e)=>{
-this.$store.commit('UPDATE_POST',e.post);
-})
-
+mounted(){  
      this.$store.commit("LOGIN", !!localStorage.getItem("token"));
     if(this.$store.getters.isLoggedIn){
      User.auth().then(response => {
@@ -207,13 +187,24 @@ this.$store.commit('UPDATE_POST',e.post);
       //load post
     });
      }
+this.fetchPost();
+  //broadcast new post
+ window.Echo.channel('NewPostChannel')
+.listen('NewPost', (e)=>{
+//update post list state
+      this.$store.commit('ADD_POST',e.post);
+
+});
+
+//update a specific post
+window.Echo.channel('UpdatePostChannel')
+.listen('UpdatePost', (e)=>{
+this.$store.commit('UPDATE_POST',e.post);
+})
+  
 
 },
 
-created(){
-  //get user
-    this.fetchPost();
-}
 
 }
 </script>

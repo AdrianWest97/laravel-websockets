@@ -17,6 +17,6 @@ export default {
     return Api().get("/user");
   },
   post() {
-    return Api().get("/post/all");
+    return Api().get("/user/post");
   }
 };

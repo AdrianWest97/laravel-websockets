@@ -57,7 +57,7 @@ methods:{
     confirm(){
         this.loading = !this.loading
         Post.delete(this.$store.state.deleteDialog.id)
-        .then(()=>{
+    .then(()=>{
             this.$store.commit('SET_DELETE_DIALOG',{
                 visible:false,
                 id:null
@@ -66,6 +66,12 @@ methods:{
            this.loading = !this.loading
         })
     }
+},
+mounted(){
+    window.Echo.channel('DeleteChannel')
+.listen('DeletePost', (e)=>{
+this.$store.commit('DELETE_POST',e.delete_id);
+})
 }
 }
 </script>

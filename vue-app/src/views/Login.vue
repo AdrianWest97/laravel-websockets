@@ -1,50 +1,75 @@
 <template>
-  <div class="home col-5 mx-auto py-5 mt-5">
-    <h1 class="text-center">Login</h1>
-    <div class="card">
-      <div class="card-body">
-        <div class="form-group">
-          <label for="email">Email address:</label>
-          <input type="email" v-model="form.email" class="form-control" id="email" />
-          <span class="text-danger" v-if="errors.email">{{ errors.email[0] }}</span>
-        </div>
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" v-model="form.password" class="form-control" id="password" />
-          <span class="text-danger" v-if="errors.password">{{ errors.password[0] }}</span>
-        </div>
-        <button @click.prevent="login" class="btn btn-primary btn-block">Login</button>
-      </div>
-    </div>
-  </div>
+<div class="container my-16">
+<v-row justify="center" dense>
+  <v-col cols="12" class="justify-content-center" md="4" lg="4">
+    <v-card outlined>
+      <v-card-title headline>Login</v-card-title>
+      <v-card-text>
+        <v-form
+         @submit.prevent="login"
+          v-model="valid"
+       lazy-validation
+         >
+          <v-text-field 
+          outlined dense
+           label="Email address"
+            required 
+            v-model="form.email"
+             :rules="[v => !!v || 'This field is required']"
+            ></v-text-field>
+          <v-text-field
+           type="password"
+            outlined 
+            dense 
+            label="Password"
+            required v-model="form.password"
+            :rules="[v => !!v || 'This field is required']"
+             ></v-text-field>
+            <div class="text-danger" v-if="errors.email">{{ errors.email[0] }}</div>
+
+          <v-btn
+           :loading="loading"
+            type="submit"
+             :disabled="!valid"
+              color="primary">Login</v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-col>
+</v-row>
+</div>
 </template>
 
 <script>
 import User from "../apis/User";
 
 export default {
-  data() {
-    return {
+  data:() => ({
+        valid:true,
+        loading:false,
       form: {
-        email: "",
-        password: ""
+        email:null,
+        password:null,
       },
       errors: []
-    };
-  },
+  }),
 
   methods: {
     login() {
+      this.loading = true;
       User.login(this.form)
         .then(response => {
           this.$store.commit("LOGIN", true);
           localStorage.setItem("token", response.data);
+          this.loading = false
           this.$router.push({ name: "Dashboard" });
         })
         .catch(error => {
           if (error.response.status === 422) {
             this.errors = error.response.data.errors;
           }
+                    this.loading = false
+
         });
     }
   }

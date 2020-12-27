@@ -18,7 +18,7 @@
                :loading="loading"
               >
                   <v-card-title class="headline">
-                      {{blog.title}}
+          <h1 class="blog-head"><router-link :to="{name: 'blog_details',params:{blogId: blog.id}}">{{blog.title}}</router-link></h1>
                   </v-card-title>
                   <v-card-text>
                           <v-img
@@ -27,7 +27,7 @@
         :lazy-src="`https://picsum.photos/10/6`"
         aspect-ratio="1"
          max-height="500"
-        class="grey lighten-2"
+        class="grey lighten-2 rounded"
         contain
       >
         <template v-slot:placeholder>
@@ -46,22 +46,32 @@
       <div v-html="blog.post"></div>
 
                   </v-card-text>
+                   <v-divider></v-divider>
+            <post-comments :commentsArr="blog.comments"></post-comments>
               </v-card>
+           
           </v-col>
+        <comment :postId="$route.params.blogId"></comment>
       </v-row>
   </v-container>
 </template>
 
 <script>
 import Post from '../apis/Post'
+import Comment from '../components/Comment.vue';
+import PostComments from '../components/PostComments.vue';
 export default {
 data:() =>({
 blog:null,
 loading: true,
 firstLoad: true,
 }),
+components:{
+Comment,
+PostComments
+},
 methods:{
-    fetchBlog(){
+  fetchBlog(){
        this.loading = true;
         if(this.$route.params.blogId != null){
             //fetch post by ID

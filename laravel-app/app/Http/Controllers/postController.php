@@ -96,11 +96,11 @@ class postController extends Controller
 
     //get post by id
     public function get($id){
-        return Post::find($id)->loadMissing(['category','user','image','tags']);
+        return Post::where('id',$id)->with(['category','user','image','tags','comments.user'])->first();
     }
 
     //get user post
     public function userPost(){
-        Post::where("user_id",auth('api')->id())->with(['category','image','tags'])->get();
+        return Post::where("user_id",auth('api')->id())->with(['category','image','tags'])->get();
     }
 }
