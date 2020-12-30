@@ -1,44 +1,57 @@
 <template>
 
   <!-- Navigation -->
-<nav class="navbar navbar-expand-lg p-0 navbar-dark bg-dark shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg p-lg-0 navbar-dark primary shadow-sm fixed-top">
   <div class="container">
-    <router-link to="/" class="font-weight-bold text-white">West Blog's</router-link>
+    <router-link to="/" class="font-weight-bold text-white"><h3>{{title}}</h3></router-link>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item active">
-          <router-link to="/" class="nav-link" href="#">
+          <router-link to="/" class="nav-link text-white font-weight-bold" href="#">
                 <span class="sr-only">(current)</span>
               </router-link>
         </li>
         <li class="nav-item">
-          <router-link v-if="!isLoggedIn" to="/login" class="nav-link" href="#">Login</router-link>
+          <router-link v-if="!isLoggedIn" to="/login" class="nav-link text-white font-weight-bold" href="#">Login</router-link>
         </li>
 
           <li class="nav-item">
-          <router-link v-if="!isLoggedIn" to="/register"  class="nav-link" href="#">Register</router-link>
+          <router-link v-if="!isLoggedIn" to="/register"  class="nav-link text-white font-weight-bold" href="#">Register</router-link>
         </li>
 
      
 
 
         <li class="nav-item">
-            <router-link to="/dashboard" v-if="isLoggedIn"  class="nav-link">
-            <div>
-            <span class="">Dashboard</span>
-            </div>
-       </router-link>
+          <a @click="logout()" v-if="isLoggedIn"  class="nav-link text-white font-weight-bold" href="#">Logout</a>
         </li>
 
         <li class="nav-item">
-          <a @click="logout()" v-if="isLoggedIn"  class="nav-link" href="#">Logout</a>
+          <span class="nav-link">
+          <v-btn
+          depressed
+          color="white"
+          icon  
+          small  
+          to="/dashboard" 
+          v-if="isLoggedIn"      
+        >
+          <v-icon>mdi-account</v-icon>
+        </v-btn>
+          </span>
         </li>
 
-        
- 
+        <li class="nav-item">
+       
+
+      <div class="nav-link">
+      <notification v-if="user" :id="user.id"></notification>
+     <!-- <audio id="audio" src="../assets/sound/audio.mp3" muted="muted" autoplay></audio> -->
+      </div>
+        </li>
       </ul>
     </div>
   </div>
@@ -46,49 +59,33 @@
 
 </template>
 <script>
-import User from '../apis/User'
-import { mapGetters } from 'vuex'
-
+import { mapGetters, mapState } from 'vuex'
+import Notification from './Notification.vue'
 export default {
+  components: { Notification },
   computed: {
-    ...mapGetters(['isLoggedIn'])
+    ...mapGetters(['isLoggedIn','getNotifications']),
+    ...mapState(['user']),
   },
 
      data: () => ({
+       title:process.env.VUE_APP_NAME,
     }),
 
   methods: {
     logout () {
-      User.logout().then(() => {
-        localStorage.removeItem('token')
-        this.$store.commit('LOGIN', false)
-        if(this.$route.path != "/"){
-        this.$router.push({ path: '/' })
+      this.$store.dispatch('logout')
+      .then(()=>{
+        if(this.$route.path !== '/'){
+          this.$router.push('/')
         }
-      }).catch((err)=>{
-      if(err.response.status == 401){
-        localStorage.removeItem('token')
-         this.$store.commit('LOGIN', false)
-        if(this.$route.path != "/"){
-        this.$router.push({ path: '/' })
-      }
-    }
-      });
+      })
   },
   },
 
-  mounted(){
-  }
+
+
+
+  
 }
 </script>
-
-<style scoped>
-.router-link-exact-active {
-  transition: all 0.25s;
-
-}
-
-
-
-
-</style>

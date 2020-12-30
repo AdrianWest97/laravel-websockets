@@ -54,6 +54,9 @@ class postController extends Controller
       if($mode = 'edit' && !$draft){
       broadcast(new UpdatePost($post->loadMissing('user','category','image','tags')));
       }
+
+      //return postid
+      return $post;
     }
 
             public function saveImage($post, $file){
@@ -82,7 +85,7 @@ class postController extends Controller
 
     //all post
     public function all(){
-        return Post::where('isDraft',false)->with(['category','user','image','tags'])->orderBy('created_at','desc')->get();
+        return Post::where('isDraft',false)->with(['category','user','image','tags','comments'])->orderBy('created_at','desc')->get();
     }
 
     public function delete($id){
@@ -101,6 +104,6 @@ class postController extends Controller
 
     //get user post
     public function userPost(){
-        return Post::where("user_id",auth('api')->id())->with(['category','image','tags'])->get();
+        return Post::where("user_id",auth('api')->id())->with(['category','image','tags','comments'])->get();
     }
 }

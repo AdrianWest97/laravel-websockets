@@ -1,7 +1,7 @@
 <template>
 <div class="container my-16">
 <v-row justify="center" dense>
-  <v-col cols="12" class="justify-content-center" md="4" lg="4">
+  <v-col cols="12" class="justify-content-center" md="5" lg="4">
     <v-card outlined>
       <v-card-title headline>Login</v-card-title>
       <v-card-text>
@@ -60,9 +60,12 @@ export default {
       User.login(this.form)
         .then(response => {
           this.$store.commit("LOGIN", true);
-          localStorage.setItem("token", response.data);
+          //set token
+          localStorage.setItem("token", response.data.token);
+          //set user
+          this.$store.commit("AUTH_USER", response.data.user);
           this.loading = false
-          this.$router.push({ name: "Dashboard" });
+          this.$router.push({ name: "Home" });
         })
         .catch(error => {
           if (error.response.status === 422) {

@@ -1,16 +1,13 @@
 /* eslint-disable */
 <template>
-   <v-col cols="12" md="8">
+   <v-col cols="12" md="7">
        <v-row>
   <v-col cols="12">
   <v-sheet
     class="pa-3"
     v-if="firstLoad" :loading="loading" 
   >
-    <v-skeleton-loader
-      class="mx-auto"
-      type="card-heading,image"
-    ></v-skeleton-loader>
+    Loading post..
   </v-sheet>
 
 
@@ -21,14 +18,17 @@
             v-show="!firstLoad"
             :loading="loading"
            >
-               <v-card  dense flat tile>
-                      <v-card-title  class="dark--text">
-          <h1 class="blog-head"><router-link :to="{name: 'blog_details',params:{blogId: post.id}}">{{`${post.title}`}}</router-link></h1>
+
+                          <v-card  dense flat >
+            <v-card-title>
+          <h1 class="blog-head">
+            <router-link :to="{name: 'blog_details',params:{blogId: post.id}}">{{`${post.title.length > 20 ? `${post.title.substring(0,20)}...` : post.title}`}}</router-link></h1>
           <v-spacer></v-spacer>
           <v-menu
             bottom
+            transition="slide-x-transition"
             left
-            v-if="isLoggedIn && post.user.id == auth.user.id"
+            v-if="user && isLoggedIn && post.user.id == user.id"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -108,7 +108,7 @@
                    </v-btn>
                    </v-card-actions> -->
                </v-card>
-           </v-col>  
+           </v-col> 
            <v-col cols="12">
              <p 
              v-show="!firstLoad && postList.length == 0"
@@ -116,14 +116,11 @@
             </p>
            </v-col>
        </v-row>
-     <delete></delete>
    </v-col>
 </template>
 
 <script>
-import User from "../apis/User";
 import VueMomentsAgo from 'vue-moments-ago'
-import Delete from './Delete.vue';
 import { mapGetters, mapState } from 'vuex';
 
 /* eslint-disable */
@@ -139,15 +136,14 @@ export default {
       ],
     }),
 components:{
-     VueMomentsAgo,
-Delete
+ VueMomentsAgo,
 },
 computed:{
 ...mapGetters([
   'isLoggedIn',
-  'postList'
+  'postList',
 ]),
-...mapState(['auth'])
+...mapState(['login','user'])
 },
   methods:{
     checkAction(action, id){
@@ -180,13 +176,6 @@ computed:{
   },
 
 mounted(){  
-     this.$store.commit("LOGIN", !!localStorage.getItem("token"));
-    if(this.$store.getters.isLoggedIn){
-     User.auth().then(response => {
-      this.$store.commit("AUTH_USER", response.data);
-      //load post
-    });
-     }
 this.fetchPost();
   //broadcast new post
  window.Echo.channel('NewPostChannel')

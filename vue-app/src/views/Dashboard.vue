@@ -1,18 +1,13 @@
 <template>
   <v-container class="mx-auto  my-16" cols="12" md="8" sm="12">
     <v-row>
-      <v-col cols="12" class="my-5">
-       <v-sheet  v-if="firstLoad" :loading="loading">
-        <v-skeleton-loader class="mx-auto" type="table"></v-skeleton-loader>
-         </v-sheet>
-      </v-col>
-            <v-col cols="12">
+   <v-col cols="12">
       <v-card 
-        v-show="postList && !firstLoad"
-      elevation="0" outlined>
-        <v-card-title>
+        v-show="computedPostList"
+        elevation="0" outlined>
+        <v-card-title class="grey darken-3 white--text">
           <div class="d-flex flex-column">
-             <p>Blog Post ({{postList.length}})</p>
+             <p>Blog Post ({{computedPostList.length}})</p>
           <create-button/>
           </div>
          
@@ -22,11 +17,19 @@
     item-key="title"
     :items-per-page="5"
     class="elevation-0"
-   :items="postList"
+   :items="computedPostList"
   >
 
       <template v-slot:item.created_at="{ item }">
                     {{item.created_at | moment("MMM DD, YYYY")}}
+      </template>
+
+    <template v-slot:item.title="{ item }">
+                    {{item.title.length > 40 ? `${item.title.substring(0,35)}...` : item.title}}
+      </template>
+      
+      <template v-slot:item.comments="{ item }">
+                    {{item.comments.length}}
       </template>
 
             <template v-slot:item.isDraft="{ item }">
@@ -59,26 +62,23 @@
       </v-card>
       </v-col>
     </v-row>
-    <delete></delete>
   </v-container>
 </template>
 
 <script>
-import User from "../apis/User";
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import CreateButton from '../components/CreateButton.vue';
-import Delete from '../components/Delete.vue'
 
 export default {
-  components: { CreateButton, Delete },
+  components: { CreateButton },
   data:()=>({
      firstLoad:true,
      loading:false,
-     postList:[],
     headers:[
        { text: 'Created', value: 'created_at' },
        { text: 'Category', value: 'category.name' },
        { text: 'Title', value: 'title' },
+       { text: 'Comments', value: 'comments' },
        { text: 'Status', value: 'isDraft' },
                { text: 'Actions', value: 'actions', sortable: false },
 
@@ -86,38 +86,29 @@ export default {
   }),
   computed: {
     ...mapState({
-      user: state => state.auth.user
-    })
+      isLoggedIn:state => state.isLoggedIn,
+      user: state => state.user
+    }),
+    ...mapGetters(['postList']),
+    computedPostList(){
+      return this.postList.filter(post => post.user.id == this.user.id)
+    }
   },
 
   methods:{
-    fetchPost(){
-      this.loading = true
-      User.post()
-      .then((res)=>{
-        this.postList = res.data
-           setTimeout(() => {
-          if (this.firstLoad) this.firstLoad = false
-          this.loading = false;
-        }, 1000);
-      })
-    },
+    
     editBlog(post){
      this.$router.push({name:'NewPost', params:{mode: 'edit',post:post}})
     },
     deletePost(id){
-      this.$store.dispatch('deletePost',id)
-      .then(() =>{
-        this.postList = this.postList.filter(post => post.id != id);
-      })
+      this.$store.dispatch('deletePost',id);
     }
   },
 
   mounted() {
-    User.auth().then(response => {
-      this.$store.commit("AUTH_USER", response.data);
-    });
-    this.fetchPost();
+    if(this.$store.getters.isLoggedIn){
+        this.$store.dispatch('setUser');
+    }
   }
 };
 </script>

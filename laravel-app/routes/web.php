@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Events\Hello;
+use App\Notifications\CommentNotification;
+use App\User;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,4 +18,10 @@ use App\Events\Hello;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+Route::get('/notify',function(){
+  $user = User::find(2);
+  $user->notify(new CommentNotification());
 });

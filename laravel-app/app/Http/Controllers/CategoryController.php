@@ -10,6 +10,6 @@ class CategoryController extends Controller
 {
     //get all categories
     public function all(){
-        return Category::withCount(['post'])->get();
+        return Category::withCount(['post'])->orderBy("name","asc")->get();
     }
 }

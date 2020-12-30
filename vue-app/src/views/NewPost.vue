@@ -9,7 +9,7 @@
        @submit.prevent="submit"
        >
               <v-card outlined>
-                  <v-card-title  class="blue white--text">Create/Edit Post</v-card-title>
+                  <v-card-title  class="grey darken-3 white--text">Create/Edit Post</v-card-title>
 
                 <v-card-text>
                  <v-row>
@@ -37,29 +37,31 @@
                          </v-text-field>
                       </v-col>
                        <v-col cols="12">
-                          <template>
                       <v-file-input
                         label="Upload Front image"
                         outlined
                         dense
                         v-model="form.image"
-                        prepend-icon="mdi-camera"
-                      ></v-file-input>
-                    </template>
-                        </v-col>
+                        append-icon="mdi-camera"
+                      >
+                      </v-file-input>
+                      </v-col>
+
                              <v-col
                             cols="12"
                              v-if="form.image">
                              <v-avatar
                              tile
-                              class="profile"
                             color="grey"
-                            size="164"
-                             :loading="!form.image"
+                            size="100"
+                            :loading="!form.image"
                              >
                              <v-img :src='previewFile()'></v-img>
                              </v-avatar>
                            </v-col>
+
+
+
                                 <v-col
                             cols="12"
                             sm="6"
@@ -68,7 +70,7 @@
                              tile
                             class="profile"
                             color="grey"
-                            size="164"
+                            size="100"
                             :loading="!temp_img"
                              >
                                <v-img :src='temp_img'></v-img>
@@ -76,7 +78,7 @@
                            </v-col>
                     
                          <v-col cols="12">
-                               <vue-editor required :editorToolbar="customToolbar"  v-model="form.post"></vue-editor>
+                               <vue-editor :editorToolbar="customToolbar"  v-model="form.post"></vue-editor>
                                      <span class="text-danger" v-if="errors.title">
                              Please add some content to this post.
                             </span>
@@ -97,13 +99,17 @@
                     append-icon
                     chips
                     outlined
+                    hide-selected
+                    :counter="5"
                     dense
+                    clearable
                     :rules="[v => !!v || 'Add up to 5 blog tags']"
 					        	required
                     deletable-chips
                     :search-input.sync="tag" 
                     @keyup.tab="updateTags"
                     @paste="updateTags">
+                    
                     <template v-slot:selection="data">
             <v-chip
               :key="JSON.stringify(data.item)"
@@ -117,6 +123,17 @@
               {{ data.item }}
             </v-chip>
           </template>
+
+                 <!-- <template v-slot:no-data>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>
+              No results matching "<strong>{{ tag }}</strong>". Press <kbd>enter</kbd> to create a new one
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </template> -->
+
               </v-combobox>
                     <span class="text-danger" v-if="errors.tags">
                             Add up to 5 blog tags  
@@ -128,7 +145,7 @@
                 <v-card-actions>
                 <v-spacer></v-spacer>
           <v-btn
-            color="success"
+            color="primary"
             type="submit"
             large
             :disabled="!valid"
@@ -136,7 +153,7 @@
           {{mode == 'edit' ? 'Save and publish' : 'Publish Blog'}}  
           </v-btn>
             <v-btn
-            color="primary"
+            color="seondary"
             outlined
              @click="draft()"
             :disabled="!valid"
@@ -159,6 +176,7 @@ import { mapGetters } from 'vuex';
 import Post from '../apis/Post';
 import { VueEditor } from "vue2-editor";
 
+
 export default {
 data:() =>({
     dialog:true,
@@ -175,11 +193,11 @@ data:() =>({
         { align: "right" },
         { align: "justify" }
     ],
-      ["blockquote", "code-block"],
+      ["blockquote"],
         [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
       [{ color: [] }],
        [{ list: "ordered" }, { list: "bullet" }],
-        ["code-block","link",],
+        ["code-block","link","image",'video'],
           ["clean"] // remove formatting button
 
       ],
@@ -201,7 +219,15 @@ data:() =>({
         temp_img:''
 
 }),
-
+  watch: {
+      form:{
+        deep: true,
+        handler(val){
+        if(val.tags.length > 5)
+           this.$nextTick(() => this.form.tags.pop())
+        }
+      },
+    },
 computed:{
 ...mapGetters(['postDialog'])
 },
@@ -243,6 +269,12 @@ methods:{
             .then((res) =>{
              this.$refs.form.reset()
              this.form = {}
+             this.$router.push({name:'blog_details', params:{blogId: res.data.id ,post:res.data}})
+             this.$store.commit('SET_SNACK_BAR',{
+               visible:true,
+               timeout:3000,
+               content: this.mode == 'edit' ? 'Update success' : 'Blog created'
+             })
             }).catch(error => {
           if (error.response.status === 422) {
             this.errors = error.response.data.errors;
@@ -259,7 +291,6 @@ methods:{
           this.tag = "";
         });
       });
-      // console.log(this.form.tags)
     }
 },
 

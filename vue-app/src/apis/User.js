@@ -18,5 +18,11 @@ export default {
   },
   post() {
     return Api().get("/user/post");
+  },
+  notifications() {
+    return Api().get("/user/notifications");
+  },
+  lastNotification() {
+        return Api().get("/user/notifications/last");
   }
 };

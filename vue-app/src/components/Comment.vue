@@ -1,32 +1,42 @@
 <template>
   <v-row>
-      <v-col cols="12" lg="8" >
+      <v-col cols="12" lg="8" v-if="$store.state.login">
       <v-card flat>
-        <v-card-title>Leave a comment</v-card-title>
+        <v-card-title>Leave a comment
+        </v-card-title>
          <v-card-text>
-             <v-form 
-             ref="form"
-              v-model="valid"
-               lazy-validation 
-               @submit.prevent="submit">
             <v-textarea
-          auto-grow
           v-model="comment"
-          outlined
-          required
-          @key.enter="submit()"
-          :rules="[v => !!v || 'This field is required']" 
-          rows="2"
-          placeholder="Type your comment here"
-        ></v-textarea>
+          solo
+          filled
+          auto-grow
+        
+          rows="1"
+          row-height="15"
+          dense
+          prepend-inner-icon="mdi-account-circle-outline"
+          @key.enter="submit"
+          placeholder="Type your comment here..."
+        >
+        <template v-slot:append>
         <v-btn 
-        type="submit" 
+        @click="submit()" 
         :loading="loading" 
-        :disabled="!valid" 
-        color="indigo text-white">comment</v-btn>
-             </v-form>
+        :disabled="!comment"
+        icon
+        color="indigo text-white">
+        <v-icon>
+            mdi-send
+            </v-icon></v-btn>
+        </template>
+
+        </v-textarea>
+       
        </v-card-text>
       </v-card>
+      </v-col>
+      <v-col v-else>
+          Sign in to add comment
       </v-col>
       
   </v-row>
@@ -36,24 +46,20 @@
 import Comment from '../apis/Comment';
 export default {
 data: () =>({
-valid:true,
 loading:false,
 comment:'',
 }),
 methods:{
     submit(){
-        if(this.valid){
             const data = {
                 comment: this.comment,
                 post_id:this.postId
             }
-
             Comment.Create(data)
-            .then((res) => {
-                this.$refs.form.reset();
-                console.log(res)
+            .then(() => {
+                this.comment='';
             })
-        }
+        
     }
 },
 props:{
