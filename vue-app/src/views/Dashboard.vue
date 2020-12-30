@@ -8,7 +8,6 @@
         <v-card-title class="grey darken-3 white--text">
           <div class="d-flex flex-column">
              <p>Blog Post ({{computedPostList.length}})</p>
-          <create-button/>
           </div>
          
         </v-card-title>
@@ -67,10 +66,8 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import CreateButton from '../components/CreateButton.vue';
 
 export default {
-  components: { CreateButton },
   data:()=>({
      firstLoad:true,
      loading:false,

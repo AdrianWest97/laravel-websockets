@@ -1,6 +1,6 @@
 /* eslint-disable */
 <template>
-   <v-col cols="12" md="7">
+   <v-col cols="12">
        <v-row>
   <v-col cols="12">
   <v-sheet
@@ -22,7 +22,7 @@
                           <v-card  dense flat >
             <v-card-title>
           <h1 class="blog-head">
-            <router-link :to="{name: 'blog_details',params:{blogId: post.id}}">{{`${post.title.length > 20 ? `${post.title.substring(0,20)}...` : post.title}`}}</router-link></h1>
+            <router-link :to="{name: 'blog_details',params:{blogId: post.id}}">{{`${post.title.length > 50 ? `${post.title.substring(0,50)}...` : post.title}`}}</router-link></h1>
           <v-spacer></v-spacer>
           <v-menu
             bottom
@@ -64,7 +64,7 @@
         :src="loadImage(post.image.path)"
         :lazy-src="`https://picsum.photos/10/6`"
         aspect-ratio="1"
-         max-height="250"
+         max-height="600"
         class="grey lighten-2 rounded"
         fit
       >

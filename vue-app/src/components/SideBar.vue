@@ -57,12 +57,7 @@ methods:{
       mode:"add"
     })
   },
-  filter(id){
-   this.$store.dispatch("filterByCategory",{
-     filter:true,
-     id:id
-   });
-  }
+
 },
 created(){
 

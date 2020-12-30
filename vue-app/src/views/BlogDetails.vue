@@ -38,7 +38,6 @@
         aspect-ratio="1"
          max-height="600"
         class="grey lighten-2 rounded"
-        contain
       >
         <template v-slot:placeholder>
           <v-row
