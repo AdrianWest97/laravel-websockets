@@ -1,7 +1,7 @@
 <template>
 <div class="container my-16">
 <v-row justify="center" dense>
-    <v-col cols="12" class="justify-content-center" md="4" lg="4">
+    <v-col cols="12" class="justify-content-center" md="5" lg="4">
     <v-card outlined>
      <v-card-title headline>Register</v-card-title>
       <v-card-text>

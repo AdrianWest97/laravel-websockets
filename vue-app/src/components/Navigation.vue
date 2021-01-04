@@ -1,7 +1,7 @@
 <template>
 
   <!-- Navigation -->
-<nav class="navbar navbar-expand-lg  navbar-dark primary shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark  text-dark shadow-sm fixed-top">
   <div class="container-fluid">
 
 
@@ -11,7 +11,7 @@
         <span class="navbar-toggler-icon"></span>
   </button>
 
-   <div class="collapse navbar-collapse" id="navbarResponsive">
+   <div class="collapse navbar-collapse"  id="navbarResponsive">
    <ul class="navbar-nav mr-auto">
   <li  v-bind:class="{ 'nav-item': true,active:selectedItem == item.id,'font-weight-bold':selectedItem == item.id }" v-for="item in $store.state.categories" :key="item.id"  @click="filter(item.id)">
       <a href="#" class="nav-link">{{item.name}}</a>
@@ -29,18 +29,16 @@
           <router-link v-if="!isLoggedIn" to="/register"  class="nav-link text-white font-weight-bold" href="#">Register</router-link>
         </li>  
 
-          <li class="nav-item">
+                 <li class="nav-item">
           <span class="nav-link">
-          <v-btn
-          depressed
-          color="white"
-          icon  
-          small  
-          to="/dashboard" 
-          v-if="isLoggedIn"      
-        >
-          <v-icon>mdi-account</v-icon>
-        </v-btn>
+             <v-btn
+             text
+       color="white"
+       elevation="0"
+       small
+       v-if="isLoggedIn"
+       to="/dashboard"
+       >Dashboard</v-btn>
           </span>
         </li>
 
@@ -61,7 +59,7 @@
        small
        v-if="isLoggedIn"
        @click="logout()"
-       >Logout <v-icon>mdi-logout</v-icon></v-btn>
+       >Logout</v-btn>
           </span>
         </li>
           <li class="nav-item">
@@ -106,6 +104,7 @@ export default {
 
   methods: {
     logout () {
+      this.collapse();
       this.$store.dispatch('logout')
       .then(()=>{
         if(this.$route.path !== '/'){
@@ -122,8 +121,19 @@ export default {
         }
     });
   },
-    filter(id){
+  collapse(){
+    document.addEventListener("click", function(event) {
+  if (event.target.classList.contains("navbar-toggler-icon")) {
+    document.getElementById("navbarResponsive").classList.toggle("show");
+  } else if (event.target.classList.contains("nav-link")) {
+    document.getElementById("navbarResponsive").classList.remove("show");
+  }
+});
+  },
+    filter(id){     
+      this.collapse();    
       this.selectedItem = id;
+      this.show = true;
    this.$store.dispatch("filterByCategory",{
      filter:true,
      id:id
@@ -132,6 +142,8 @@ export default {
           this.$router.push('/')
         }
    })
+  },
+  mounted(){
   }
   },
 

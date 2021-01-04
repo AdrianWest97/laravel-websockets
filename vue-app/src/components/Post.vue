@@ -19,7 +19,7 @@
             :loading="loading"
            >
 
-                          <v-card  dense flat >
+           <v-card  dense flat >
             <v-card-title>
           <h1 class="blog-head">
             <router-link :to="{name: 'blog_details',params:{blogId: post.id}}">{{`${post.title.length > 50 ? `${post.title.substring(0,50)}...` : post.title}`}}</router-link></h1>
@@ -82,7 +82,7 @@
         </template>
       </v-img>
   </v-col>
-                       </v-row>
+           </v-row>
                       <div v-html="post.post.length > 202 ? `${post.post.substring(0,150)}...` : post.post"></div>
                     <v-chip
                       class="mr-2"
@@ -109,11 +109,13 @@
                    </v-card-actions> -->
                </v-card>
            </v-col> 
-           <v-col cols="12">
-             <p 
-             v-show="!firstLoad && postList.length == 0"
-            >No data available
-            </p>
+           <v-col cols="12"             
+            v-show="!firstLoad && postList.length == 0">
+             <h2
+             class="grey--text"
+            >No blogs found...
+            </h2>
+            <create-button></create-button>
            </v-col>
        </v-row>
    </v-col>
@@ -122,6 +124,7 @@
 <script>
 import VueMomentsAgo from 'vue-moments-ago'
 import { mapGetters, mapState } from 'vuex';
+import CreateButton from './CreateButton.vue';
 
 /* eslint-disable */
 
@@ -137,6 +140,7 @@ export default {
     }),
 components:{
  VueMomentsAgo,
+CreateButton
 },
 computed:{
 ...mapGetters([

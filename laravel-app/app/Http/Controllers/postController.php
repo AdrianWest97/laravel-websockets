@@ -23,7 +23,6 @@ class postController extends Controller
             "isDraft" => "required","boolean"
         ]);
 
-
         $post = $mode == 'add' ? new Post : Post::find($id);
         //find category
         $category = Category::where("name",$data['category'])->first();

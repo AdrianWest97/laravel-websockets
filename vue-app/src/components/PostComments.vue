@@ -1,6 +1,5 @@
 <template>
-  <v-row>
-      <v-col cols="12" >
+
       <v-card flat>
         <v-card-title>Comments</v-card-title>
         <v-card-subtitle>
@@ -11,32 +10,37 @@
                 {{comments.length}} comments
             </v-chip>
         </v-card-subtitle>
-        
-    <v-slide-y-transition
-        class="py-0"
-        group
-        tag="v-list"
-      >
-      
-        <v-list-item
-         three-line
-         v-for="comment in comments"
-         :key="comment.id"
+        <v-slide-y-transition
+          class="py-0"
+          group
+          tag="v-list"
+        > 
+
+        <template   
+         v-for="(comment,index) in comments"
+        >
+      <v-list-item
+        :key="comment.id"
           >
       <v-list-item-content>
-        <v-list-item-title>{{comment.user.name}} <vue-moments-ago prefix="posted" suffix="ago" :date="comment.created_at" lang="en"></vue-moments-ago> </v-list-item-title>
+        <v-list-item-title><span class="font-weight-bold">{{comment.user.name}}</span>&nbsp;&nbsp;
+             <vue-moments-ago prefix="posted" suffix="ago" :date="comment.created_at" lang="en"></vue-moments-ago>
+              </v-list-item-title>
         <v-list-item-subtitle>{{comment.comment}}</v-list-item-subtitle>
          <div class="d-flex flex-row" v-if="login">
-          <a class="pr-2" @click.prevent="removeComment(comment.id)" href="#" v-if="comment.user.id == user.id">Delete</a>
-          <a  class="pr-2" href="#">Reply</a>
-      </div>
+          <a class="pr-2 small" @click.prevent="removeComment(comment.id)" href="#" v-if="comment.user.id == user.id">Delete</a>
+          <a  class="pr-2 small" href="#">Reply</a>
+         </div>
       </v-list-item-content>
-     
     </v-list-item>
-    </v-slide-y-transition>
-      </v-card>
-      </v-col>
-  </v-row>
+        <v-divider
+            v-if="index < comments.length - 1"
+            :key="index"
+          ></v-divider>
+        </template>
+        </v-slide-y-transition>
+</v-card>
+     
 </template>
 
 <script>

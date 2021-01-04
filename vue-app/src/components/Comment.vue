@@ -1,7 +1,5 @@
 <template>
-  <v-row>
-      <v-col cols="12" lg="8" v-if="$store.state.login">
-      <v-card flat>
+      <v-card flat v-if="$store.state.login">
         <v-card-title>Leave a comment
         </v-card-title>
          <v-card-text>
@@ -10,7 +8,6 @@
           solo
           filled
           auto-grow
-        
           rows="1"
           row-height="15"
           dense
@@ -34,12 +31,7 @@
        
        </v-card-text>
       </v-card>
-      </v-col>
-      <v-col v-else>
-          Sign in to add comment
-      </v-col>
-      
-  </v-row>
+
 </template>
 
 <script>

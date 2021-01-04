@@ -16,6 +16,7 @@
     "laravel-echo": "^1.10.0",
     "popper.js": "^1.16.1",
     "pusher-js": "^7.0.2",
+    "quill-video-resize-module2": "0.0.1",
     "vue": "^2.6.11",
     "vue-moment": "^4.1.0",
     "vue-moments-ago": "^0.2.0",

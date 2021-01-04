@@ -78,7 +78,7 @@
                            </v-col>
                     
                          <v-col cols="12">
-                               <vue-editor :editorToolbar="customToolbar"  v-model="form.post"></vue-editor>
+                               <vue-editor :editorOptions="editorOptions" :editorToolbar="customToolbar"  v-model="form.post"></vue-editor>
                                      <span class="text-danger" v-if="errors.title">
                              Please add some content to this post.
                             </span>
@@ -174,7 +174,10 @@
 
 import { mapGetters } from 'vuex';
 import Post from '../apis/Post';
-import { VueEditor } from "vue2-editor";
+import { VueEditor,Quill } from "vue2-editor";
+import VideoResize from 'quill-video-resize-module2'
+Quill.register('modules/VideoResize', VideoResize)
+
 
 
 export default {
@@ -183,6 +186,14 @@ data:() =>({
     valid: true,
     preview:true,
     errors: [],
+    editorOptions:{
+      modules: {
+			VideoResize: {
+				modules: [ 'Resize', 'DisplaySize', 'Toolbar' ],
+				tagName: 'iframe', // iframe | video
+        	}
+		}
+    },
     customToolbar: [
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
 
@@ -198,7 +209,8 @@ data:() =>({
       [{ color: [] }],
        [{ list: "ordered" }, { list: "bullet" }],
         ["code-block","link","image",'video'],
-          ["clean"] // remove formatting button
+          ["clean"],
+           // remove formatting button
 
       ],
     tag:'',
@@ -263,7 +275,7 @@ methods:{
             //post form
             Post.create(
               formData, //form data to submit
-              this.mode, //edit or add
+              this.mode ? this.mode : 'add', //edit or add
                this.post != null ? this.post.id : null //id ofpost if edit
                )
             .then((res) =>{
