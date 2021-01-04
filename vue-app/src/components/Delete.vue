@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 <template>
   <v-row justify="center">
     <v-dialog v-model="deleteDialog.visible"
@@ -37,7 +35,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 import { mapState } from 'vuex'
 import Post from '../apis/Post'
 export default {

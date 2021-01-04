@@ -1,4 +1,3 @@
-/* eslint-disable */
 <template>
    <v-col cols="12">
        <v-row>
@@ -97,16 +96,7 @@
                       ></v-avatar>
                       {{ tag }}
                     </v-chip>
-  
                    </v-card-text>
-                   <!-- <v-card-actions>
-                                     <v-spacer></v-spacer>
-                            <v-btn 
-                   elevation="0" 
-                    color="indigo text-white"
-                   >Read More
-                   </v-btn>
-                   </v-card-actions> -->
                </v-card>
            </v-col> 
            <v-col cols="12"             
@@ -125,10 +115,6 @@
 import VueMomentsAgo from 'vue-moments-ago'
 import { mapGetters, mapState } from 'vuex';
 import CreateButton from './CreateButton.vue';
-
-/* eslint-disable */
-
-
 export default {
         data: () => ({
           loading: false,

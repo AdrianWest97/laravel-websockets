@@ -124,16 +124,6 @@
             </v-chip>
           </template>
 
-                 <!-- <template v-slot:no-data>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>
-              No results matching "<strong>{{ tag }}</strong>". Press <kbd>enter</kbd> to create a new one
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </template> -->
-
               </v-combobox>
                     <span class="text-danger" v-if="errors.tags">
                             Add up to 5 blog tags  
@@ -170,16 +160,11 @@
 </template>
 
 <script>
-/* eslint-disable */ 
-
 import { mapGetters } from 'vuex';
 import Post from '../apis/Post';
 import { VueEditor,Quill } from "vue2-editor";
 import VideoResize from 'quill-video-resize-module2'
 Quill.register('modules/VideoResize', VideoResize)
-
-
-
 export default {
 data:() =>({
     dialog:true,

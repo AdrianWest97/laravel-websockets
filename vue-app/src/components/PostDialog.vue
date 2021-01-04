@@ -72,8 +72,6 @@
 </template>
 
 <script>
-/* eslint-disable */ 
-
 import { mapGetters } from 'vuex'
 import Post from '../apis/Post'
 export default {
